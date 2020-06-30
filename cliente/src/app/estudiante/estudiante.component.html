@@ -1,0 +1,147 @@
+<br>
+
+<div *ngIf="noHayEstudiante" class="row justify-content-md-center">
+    <div class="card col-md-6">
+        <div class="card-body">
+            <h4 class="card-title">Iniciar Sesion</h4>
+            <div>
+                <label>Email</label>
+                <input [(ngModel)]="estudiante.email" type="email" class="form-control" id="emailIS" ng-model="email"
+                    placeholder="Email" (keydown.enter)="pulsar($event)">
+                <br>
+                <label>Contraseña</label>
+                <input [(ngModel)]="estudiante.contrasena" type="password" class="form-control" id="contrasenaIS"
+                    ng-model="contrasena" (keydown.enter)="pulsar($event)" placeholder="Contraseña">
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-4">
+                        <button type="button" (click)="limpiar()" class="btn btn-raised btn-danger"><i
+                                class="fa fa-trash"></i> Limpiar</button>
+                    </div>
+                    <div class="col-4">
+                        <button *ngIf="!iniciando" type="button" (click)="iniciarSesion()"
+                            class="btn btn-raised btn-success"><i class="fa fa-sign-in"></i> Iniciar
+                            Sesion</button>
+                        <button *ngIf="iniciando" class="btn btn-raised btn-success disabled" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Iniciando ...
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div *ngIf="!noHayEstudiante" class="row justify-content-right">
+    <div class="col-9">
+
+    </div>
+    <div class="col-3 text-right">
+        <button type="button" (click)="abrirGestionSensores()" class="btn btn-outline-success text-right"><i
+                class="fa fa-cog"></i>Abrir Sensores</button>
+    </div>
+</div>-->
+<div *ngIf="!noHayEstudiante">
+    <div class="row">
+        <div class="col-3">
+
+        </div>
+        <div *ngIf="configurarSensores" class="col-6">
+            <h3>Sensores</h3>
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let sensor of listaSensores">
+                    <tr>
+                        <td>{{sensor.nombre}}</td>
+                        <td>{{sensor.estado}}</td>
+                        <td *ngIf="sensor.estado=='Desconectado' && !sensor.cargando"><button type="button"
+                                class="btn btn-outline-primary" (click)="conectarSensor(sensor)">Conectarse</button>
+                        </td>
+                        <td *ngIf="sensor.cargando"><button
+                                class="btn btn-outline-primary disabled" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Conectando ...
+                            </button></td>
+                        <td *ngIf="sensor.estado=='Conectado'  && !sensor.cargando"><button type="button"
+                                class="btn btn-outline-danger"
+                                (click)="desconectarSensor(sensor)">Desconectarse</button></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!configurarSensores" class="col-6">
+
+        </div>
+        <div class="col-3 text-right">
+            <button *ngIf="!configurarSensores" type="button" (click)="abrirGestionSensores()"
+                class="btn btn-outline-success text-right"><i class="fa fa-cog"></i> Abrir Sensores</button>
+            <button *ngIf="configurarSensores" type="button" (click)="cerrarGestionSensores()"
+                class="btn btn-outline-danger text-right"><i class="fa fa-cog"></i> Cerrar Sensores</button>
+        </div>
+    </div>
+    <div *ngIf="!conectadoaActividad" class="row justify-content-center">
+        <div class="col-12">
+            <h3>Actividades listas</h3>
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Profesor</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let actividad of listaActividades">
+                    <tr>
+                        <td>{{actividad.nombre}}</td>
+                        <td>{{actividad.profesor.nombre}}</td>
+                        <td>{{actividad.estado}}</td>
+                        <td><button *ngIf="actividad.estado!='Finalizada'" type="button" class="btn btn-outline-primary"
+                                (click)="conectarse(actividad)">Conectarse</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div *ngIf="conectadoaActividad"  class="row justify-content-center">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <div *ngIf="conectadoaActividad" class="row justify-content-center">
+        <div class="col-3 text-center">
+            <i class="fa fa-wifi fa-5x"></i>
+        </div>
+    </div>
+    <div *ngIf="conectadoaActividad" class="row justify-content-center">
+        <div class="col-3 text-center">
+            <h5>Conectado</h5>
+        </div>
+    </div>
+    <div *ngIf="conectadoaActividad" class="row justify-content-center">
+        <div class="col-3 text-center">
+            <button type="button" class="btn btn-outline-danger" (click)="desconectarse()">Desconectarse</button>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <!--*ngIf="!noHayEstudiante && conectadoaActividad"-->
+        <div class="col-md-8" style="visibility: hidden;">
+            <video id="video" width="480" height="360" autoplay muted></video>
+        </div>
+        <!--<div *ngIf="conectadoaActividad" class="col-md-4" id="estadoAlumno" class="circulo">
+            <p>Estado</p>
+        </div>-->
+    </div>
+</div>

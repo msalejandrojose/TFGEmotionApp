@@ -1,0 +1,52 @@
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Crear Profesor</h4>
+        <div>
+            <div [formGroup]="datosPrimarios" class="row">
+                <div class="col-12">
+                    <label>Nombre del Profesor</label>
+                    <input formControlName="fromControlNombreProfesor" [(ngModel)]="nombre" type="text"
+                        class="form-control" id="nombre" placeholder="Nombre" required
+                        [ngClass]="{ 'is-invalid': submitted && f.fromControlNombreProfesor.errors }">
+                    <div *ngIf="submitted && f.fromControlNombreProfesor.errors" class="invalid-feedback">
+                        <div *ngIf="f.fromControlNombreProfesor.errors.required">Nombre es requerido</div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <label>Apellidos</label>
+                    <input [(ngModel)]="apellidos" type="text" class="form-control" id="apellidos" ng-model="apellidos"
+                        placeholder="Apellidos">
+                    <br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <label>Departamento</label>
+                    <input [(ngModel)]="departamento" type="text" class="form-control" id="clase" ng-model="clase"
+                        placeholder="Departamento">
+                    <br>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-3 text-center">
+                    <button type="button" (click)="cerrar()" class="btn btn-raised btn-danger"><i
+                            class="fa fa-times-circle"></i>
+                        Cancelar</button>
+                </div>
+                <div class="col-3 text-center">
+                    <button type="button" (click)="limpiar()" class="btn btn-raised btn-warning"><i
+                            class="fa fa-trash"></i> Limpiar</button>
+                </div>
+                <div class="col-3 text-center">
+                    <button type="button" (click)="onSubmit()" class="btn btn-raised btn-success"><i
+                            class="fa fa-save"></i> Guardar</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

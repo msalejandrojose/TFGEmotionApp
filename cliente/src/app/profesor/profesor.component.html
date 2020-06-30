@@ -1,0 +1,717 @@
+<div class="">
+    <!--<div class="col-md-2">
+        <div class="sidenav list-group">
+            <a style="cursor: pointer;" class="item-menu-sidenav" (click)="abrirActividadActual()"><i
+                    class="fa fa-home"></i> Home</a>
+            <a style="cursor: pointer;" class="item-menu-sidenav" (click)="abrirAlumnos()"><i class="fa fa-user"></i>
+                Alumnos</a>
+            <a style="cursor: pointer;" class="item-menu-sidenav" (click)="abrirClases()"><i class="fa fa-book"></i>
+                Clases</a>
+            <a style="cursor: pointer;" class="item-menu-sidenav" (click)="abrirActividades()"><i
+                    class="fa fa-university"></i>
+                Actividades</a>
+        </div>
+    </div>-->
+    <div *ngIf="gestionHome" class="">
+        <br>
+        <div *ngIf="!actividadAbierta">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div class="row justify-content-center" *ngIf="!actividadAbierta">
+            <div class="col-sm-3 col-auto text-center">
+                <button type="button" class="btn btn-primary btn-circle" (click)="abrirAlumnos()"><i
+                        class="fa fa-user"></i> Alumnos</button>
+            </div>
+            <div class="col-sm-3 col-auto text-center">
+                <button type="button" class="btn btn-success btn-circle" (click)="abrirClases()"><i
+                        class="fa fa-book"></i> Clases</button>
+            </div>
+            <div class="col-sm-3 col-auto text-center">
+                <button type="button" class="btn btn-info btn-circle" (click)="abrirActividades()"><i class="fas fa-chalkboard-teacher"></i> Actividades</button>
+            </div>
+        </div>
+        <div *ngIf="!actividadAbierta">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div>
+            <app-ver-actividad *ngIf="actividadAbierta" [actividad]="actividadSelected"></app-ver-actividad>
+        </div>
+    </div>
+    <div *ngIf="gestionAlumnos" class="">
+        <br>
+        <div *ngIf="verEstadisticasA">
+            <app-ver-alumno [alumno]="verAlumno"></app-ver-alumno>
+        </div>
+        <div *ngIf="!verEstadisticasA" class="row justify-content-center">
+            <div class="col-6 text-left">
+                <h3>Alumnos</h3>
+            </div>
+            <div class="col-3 text-center">
+                <!--<button type="button" *ngIf="crearEstudiante || editarAlumno" (click)="cerrarCrearEstudiantes()"
+                    class="btn btn-outline-danger">Cancelar</button>-->
+            </div>
+            <div class="col-3 text-right">
+                <button type="button" *ngIf="!crearEstudiante && !editarAlumno" (click)="abrirCrearEstudiantes()"
+                    class="btn btn-outline-success text-right"><i class="fa fa-plus"></i> Crear
+                    Alumno</button>
+            </div>
+        </div>
+        <br>
+        <nav *ngIf="crearEstudiante">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i class="fa fa-home"></i>
+                        Home</a></li>
+                <li class="breadcrumb-item" (click)="cerrarCrearEstudiantes()"><a class="migas"><i
+                            class="fa fa-user"></i>
+                        Alumnos</a></li>
+                <li class="breadcrumb-item active" aria-current="page"> Crear Alumno</li>
+            </ol>
+        </nav>
+        <nav *ngIf="editarAlumno">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i class="fa fa-home"></i>
+                        Home</a></li>
+                <li class="breadcrumb-item" (click)="cerrarCrearEstudiantes()"><a class="migas"><i
+                            class="fa fa-user"></i>
+                        Alumnos</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Editar: {{onSelectedAlumno.nombre}}</li>
+            </ol>
+        </nav>
+        <div *ngIf="!verEstadisticasA" class="row justify-content-center">
+            <div *ngIf="crearEstudiante" class="col-8 card">
+                <div class="card-body">
+                    <h4 class="card-title">Crear Alumno</h4>
+                    <div>
+                        <div class="row">
+                            <div [formGroup]="datosPrimarios" class="col-6">
+                                <label>Nombre del Alumn@</label>
+                                <input formControlName="fromControlNombreEstudiante" [(ngModel)]="alumnoCreate.nombre"
+                                    type="text" class="form-control" id="nombre" placeholder="Nombre" required
+                                    [ngClass]="{ 'is-invalid': submitted && f.fromControlNombreEstudiante.errors }">
+                                <div *ngIf="submitted && f.fromControlNombreEstudiante.errors" class="invalid-feedback">
+                                    <div *ngIf="f.fromControlNombreEstudiante.errors.required">Nombre es requerido</div>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="col-6">
+                                <label>Apellidos</label>
+                                <input [(ngModel)]="alumnoCreate.apellidos" type="text" class="form-control"
+                                    id="apellidos" ng-model="apellidos" placeholder="Apellidos">
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Curso</label>
+                                <input [(ngModel)]="alumnoCreate.clase" type="text" class="form-control" id="clase"
+                                    ng-model="clase" placeholder="Curso">
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div [formGroup]="datosPrimarios" class="col-6">
+                                <label>Email</label>
+                                <input formControlName="fromControlEmailEstudiante" [(ngModel)]="alumnoCreate.email"
+                                    type="email" class="form-control" id="email" ng-model="email" placeholder="Email"
+                                    required
+                                    [ngClass]="{ 'is-invalid': submitted && f.fromControlEmailEstudiante.errors }">
+                                <div *ngIf="submitted && f.fromControlEmailEstudiante.errors" class="invalid-feedback">
+                                    <div *ngIf="f.fromControlEmailEstudiante.errors.required">Email es requerido</div>
+                                </div>
+                                <small id="emailHelp" class="form-text text-muted">El email tiene que ser unico</small>
+                                <br>
+                            </div>
+                            <div [formGroup]="datosPrimarios" class="col-6">
+                                <label>Contraseña</label>
+                                <input formControlName="fromControlContrasenaEstudiante"
+                                    [(ngModel)]="alumnoCreate.contrasena" type="password" class="form-control"
+                                    id="contrasena" ng-model="contrasena" placeholder="Contraseña" required
+                                    [ngClass]="{ 'is-invalid': submitted && f.fromControlContrasenaEstudiante.errors }">
+                                <div *ngIf="submitted && f.fromControlContrasenaEstudiante.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="f.fromControlContrasenaEstudiante.errors.required">Contraseña es
+                                        requerida</div>
+                                </div>
+                                <small id="contrasenaHelp" class="form-text text-muted">El usuario podrá entrar con esta
+                                    contraseña</small>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-3 text-center">
+                                <button type="button" (click)="cerrarCrearEstudiantes()"
+                                    class="btn btn-raised btn-danger"><i class="fa fa-times-circle"></i>
+                                    Cancelar</button>
+                            </div>
+                            <div class="col-3 text-center">
+                                <button type="button" (click)="limpiar()" class="btn btn-raised btn-warning"><i
+                                        class="fa fa-trash"></i> Limpiar</button>
+                            </div>
+                            <div class="col-3 text-center">
+                                <button type="button" (click)="onSubmit()" class="btn btn-raised btn-success"><i
+                                        class="fa fa-save"></i> Guardar</button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="editarAlumno" class="col-8 card">
+                <div class="card-body">
+                    <h4 class="card-title">Editar Alumno</h4>
+                    <div  class="container">
+                        <div class="row">
+                            <div [formGroup]="datosPrimarios2" class="col-6">
+                                <label>Nombre del Alumn@</label>
+                                <input formControlName="fromControlNombreEstudiante2"
+                                    [(ngModel)]="onSelectedAlumno.nombre" type="text" class="form-control" id="nombre"
+                                    placeholder="Nombre" required
+                                    [ngClass]="{ 'is-invalid': submitted2 && f2.fromControlNombreEstudiante2.errors }">
+                                <div *ngIf="submitted2 && f2.fromControlNombreEstudiante2.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="f2.fromControlNombreEstudiante2.errors.required">Nombre es requerido
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="col-6">
+                                <label>Apellidos</label>
+                                <input [(ngModel)]="onSelectedAlumno.apellidos" type="text" class="form-control"
+                                    id="apellidos" ng-model="apellidos" placeholder="Apellidos">
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Curso</label>
+                                <input [(ngModel)]="onSelectedAlumno.clase" type="text" class="form-control" id="clase"
+                                    ng-model="clase" placeholder="Curso">
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div [formGroup]="datosPrimarios2" class="col-6">
+                                <label>Email</label>
+                                <input formControlName="fromControlEmailEstudiante2"
+                                    [(ngModel)]="onSelectedAlumno.email" type="email" class="form-control" id="email"
+                                    ng-model="email" placeholder="Email" required
+                                    [ngClass]="{ 'is-invalid': submitted && f2.fromControlEmailEstudiante2.errors }">
+                                <div *ngIf="submitted2 && f2.fromControlEmailEstudiante2.errors" class="invalid-feedback">
+                                    <div *ngIf="f2.fromControlEmailEstudiante2.errors.required">Email es requerido
+                                    </div>
+                                </div>
+                                <small id="emailHelp" class="form-text text-muted">El email tiene que ser unico</small>
+                                <br>
+                            </div>
+                            <div [formGroup]="datosPrimarios2" class="col-6">
+                                <label>Contraseña</label>
+                                <input formControlName="fromControlContrasenaEstudiante2"
+                                    [(ngModel)]="onSelectedAlumno.contrasena" type="password" class="form-control"
+                                    id="contrasena" ng-model="contrasena" placeholder="Contraseña" required
+                                    [ngClass]="{ 'is-invalid': submitted && f2.fromControlContrasenaEstudiante2.errors }">
+                                <div *ngIf="submitted2 && f2.fromControlContrasenaEstudiante2.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="f2.fromControlContrasenaEstudiante2.errors.required">Email es requerido
+                                    </div>
+                                </div>
+                                <small id="contrasenaHelp" class="form-text text-muted">El usuario podrá entrar con esta
+                                    contraseña</small>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-3 text-center">
+                                <button type="button" (click)="cerrarCrearEstudiantes()"
+                                    class="btn btn-raised btn-danger"><i class="fa fa-times-circle"></i>
+                                    Cancelar</button>
+                            </div>
+                            <div class="col-3 text-center">
+                                <button type="button" (click)="limpiar()" class="btn btn-raised btn-warning"><i
+                                        class="fa fa-trash"></i> Limpiar</button>
+                            </div>
+                            <div class="col-3 text-center">
+                                <button type="button" (click)="onSubmit2()" class="btn btn-raised btn-success"><i
+                                        class="fa fa-save"></i> Actualizar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!crearEstudiante && !editarAlumno" class="col-12">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-user"></i> Alumnos</li>
+                    </ol>
+                </nav>
+                <div class="example-header">
+                    <mat-form-field>
+                        <input matInput (keyup)="applyFilterE($event.target.value)" placeholder="Filtrar">
+                    </mat-form-field>
+                </div>
+                <div class="example-container">
+                    <mat-table [dataSource]="dataSourceEstudiantes" class="mat-elevation-z1" matSort>
+                        <ng-container matColumnDef="nombre">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                            <mat-cell (click)="verEstadisticasAlumno(row)" *matCellDef="let row"> {{row.nombre}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="apellidos">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Apellidos </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="verEstadisticasAlumno(row)"> {{row.apellidos}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="clase">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Curso </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="verEstadisticasAlumno(row)"> {{row.clase}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="estadisticas">
+                            <mat-header-cell *matHeaderCellDef>Estadisticas</mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="verEstadisticasAlumno(row)"><button type="button"
+                                    class="btn btn-sm btn-outline-info" (click)="verEstadisticasAlumno(row)"><i
+                                        class="fa fa-bar-chart"></i>
+                                    Estadisticas</button></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="editarborrar">
+                            <mat-header-cell *matHeaderCellDef>Editar / Borrar</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="text-center seccion-edit">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button (click)="editar(row)"
+                                            class="btn btn-sm btn-outline-secondary boton-tabla"><i
+                                                class="fa fa-edit"></i></button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button (click)="borrar(row)"
+                                            class="btn btn-sm btn-outline-danger boton-tabla"><i class="far fa-trash-alt"></i></button>
+                                    </div>
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumnsEstudiantes"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumnsEstudiantes;" class="element-row">
+                        </mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+    <div *ngIf="gestionActividades">
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-6 text-left">
+                <h3>Actividades</h3>
+            </div>
+            <div class="col-3 text-center">
+                <!--<button type="button" *ngIf="(crearActividad) || editarActividad" (click)="cerrarModal()"
+                    class="btn btn-outline-danger">Cancelar</button>-->
+            </div>
+            <div class="col-3 text-right">
+                <button type="button" *ngIf="(!crearActividad) && !editarActividad" (click)="abrirCrearActividad()"
+                    class="btn btn-outline-success"><i class="fa fa-plus"></i> Crear
+                    Actividad</button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <nav *ngIf="(!crearActividad || editarActividad) && (crearActividad || !editarActividad)">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-chalkboard-teacher"></i>
+                            Actividades
+                        </li>
+                    </ol>
+                </nav>
+                <nav *ngIf="crearActividad">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                            class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item" (click)="cerrarModal()"><a class="migas"><i class="fas fa-chalkboard-teacher"></i>
+                                Actividades</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"> Crear Actividad
+                        </li>
+                    </ol>
+                </nav>
+                <nav *ngIf="editarActividad">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item" (click)="cerrarModal()"><a class="migas"><i class="fas fa-chalkboard-teacher"></i>
+                                Actividades</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"> Editar Actividad:
+                            {{ActividadparaEditar.nombre}}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div>
+            <app-crear-actividad *ngIf="crearActividad" [estudiantes]="listaAlumnos"
+                (actividadCreada)="guardarActividad($event)"></app-crear-actividad>
+            <app-editar-actividad *ngIf="editarActividad" [verClase]="vengoDeProfesor"
+                [editarActividad]="ActividadparaEditar" [estudiantes]="listaAlumnos"
+                (actividadEditada)="actualizarActividad($event)" (cerrarModalOut)="cerrarModal()">
+            </app-editar-actividad>
+        </div>
+        <div *ngIf="(!crearActividad || editarActividad) && (crearActividad || !editarActividad)"
+            class="row justify-content-md-center">
+            <div class="col-12">
+                <div class="example-header">
+                    <mat-form-field>
+                        <input matInput (keyup)="applyFilterA($event.target.value)" placeholder="Filtrar">
+                    </mat-form-field>
+                </div>
+                <div class="example-container">
+                    <mat-table [dataSource]="dataSourceActividades" class="mat-elevation-z1" matSort>
+                        <ng-container matColumnDef="nombre">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="abrirActividad(row)"> {{row.nombre}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="profesor">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Profesor </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="abrirActividad(row)"> {{row.profesor.nombre}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="clase">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Clase </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="abrirActividad(row)"> {{row.clase.nombre}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="estado">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="abrirActividad(row)">
+                                <div *ngIf="row.estado=='Creada'">
+                                    <i class="fa fa-check"></i> {{row.estado}}
+                                </div>
+                                <div *ngIf="row.estado=='Comenzada'">
+                                    <i class="fa fa-play-circle"></i> {{row.estado}}
+                                </div>
+                                <div *ngIf="row.estado=='Finalizada'">
+                                    <i class="fa fa-bar-chart"></i> {{row.estado}}
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="abrirActividad(row)">
+                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                    (click)="abrirActividad(row)"><i class="fa fa-external-link"></i> Acceder</button>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="editarborrar">
+                            <mat-header-cell *matHeaderCellDef>Editar / Borrar</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="text-center seccion-edit">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button (click)="editarA(row)"
+                                            class="btn btn-sm btn-outline-secondary boton-tabla"><i
+                                                class="fa fa-edit"></i></button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button (click)="borrarA(row)"
+                                            class="btn btn-sm btn-outline-danger boton-tabla"><i
+                                                class="fa fa-trash-o"></i></button>
+                                    </div>
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumnsActividades"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumnsActividades;" class="element-row">
+                        </mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+    <div *ngIf="gestionClases">
+        <br *ngIf="(!verClase || verEstadisticasC) && (verClase || !verEstadisticasC)">
+        <div *ngIf="(!verClase || verEstadisticasC) && (verClase || !verEstadisticasC)"
+            class="row justify-content-center">
+            <div class="col-6 text-left">
+                <h3>Clases</h3>
+            </div>
+            <div class="col-3 text-center">
+                <!--<button type="button" *ngIf="crearClase || editarClase" (click)="cerrarModal()"
+                    class="btn btn-outline-danger">Cancelar</button>-->
+            </div>
+            <div class="col-3 text-right">
+                <button type="button" *ngIf="!crearClase || !editarClase" (click)="abrirCrearClase()"
+                    class="btn btn-outline-success"><i class="fa fa-plus"></i> Crear
+                    Clase</button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <nav
+                    *ngIf="(!crearClase || editarClase) && (crearClase || !editarClase) && !verClase && !verEstadisticasC">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-book"></i> Clases</li>
+                    </ol>
+                </nav>
+                <nav *ngIf="crearClase">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item" (click)="cerrarModal()"><a class="migas"><i class="fa fa-book"></i>
+                                Clases</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Crear Clase</li>
+                    </ol>
+                </nav>
+                <nav *ngIf="editarClase">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item" (click)="cerrarModal()"><a class="migas"><i class="fa fa-book"></i>
+                                Clases</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Editar Clase: {{ClaseparaEditar.nombre}}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <app-crear-clase *ngIf="crearClase" [estudiantes]="listaAlumnos"></app-crear-clase>
+        <app-editar-clase *ngIf="editarClase" [estudiantes]="listaAlumnos" [editarActividad]="ClaseparaEditar">
+        </app-editar-clase>
+        <app-ver-estadisticas-clase *ngIf="verEstadisticasC" [clase]="objClaseEstadisticas">
+        </app-ver-estadisticas-clase>
+        <app-ver-clase *ngIf="verClase" [clase]="claseSelected"></app-ver-clase>
+        <div *ngIf="(!crearClase || editarClase) && (crearClase || !editarClase) && !verClase && !verEstadisticasC"
+            class="row justify-content-md-center">
+
+            <div class="col-12">
+                <div class="example-header">
+                    <mat-form-field>
+                        <input matInput (keyup)="applyFilterC($event.target.value)" placeholder="Filtrar">
+                    </mat-form-field>
+                </div>
+                <div class="example-container">
+                    <mat-table [dataSource]="dataSourceClases" class="mat-elevation-z1" matSort>
+                        <ng-container matColumnDef="nombre">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="verEstadisticasClase(row)"> {{row.nombre}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="profesor">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Profesor </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="verEstadisticasClase(row)"> {{row.profesor.nombre}}
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accion1">
+                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <button *ngIf="!creandoActividadAsociada" type="button"
+                                    class="btn btn-sm btn-outline-success" (click)="crearActividadAsociada(row)"><i
+                                        class="fa fa-plus"></i> Crear
+                                    Actividad</button>
+                                <button *ngIf="creandoActividadAsociada" class="btn btn-sm btn-outline-success disabled"
+                                    type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Creando ...
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="accion2">
+                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="abrirClase(row)">
+                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                    (click)="abrirClase(row)"><i class="fa fa-external-link"></i> Ver
+                                    Clase</button>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="accion3">
+                            <mat-header-cell *matHeaderCellDef>Estadisticas</mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="verEstadisticasClase(row)">
+                                <button type="button" class="btn btn-sm btn-outline-info"
+                                    (click)="verEstadisticasClase(row)"><i class="fa fa-bar-chart"></i> Ver
+                                    Estadisticas</button>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="editarborrar">
+                            <mat-header-cell *matHeaderCellDef>Editar / Borrar</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="text-center seccion-edit">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button (click)="editarC(row)"
+                                            class="btn btn-sm btn-outline-secondary boton-tabla"><i
+                                                class="fa fa-edit"></i></button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button (click)="borrarC(row)"
+                                            class="btn btn-sm btn-outline-danger boton-tabla"><i
+                                                class="fa fa-trash-o"></i></button>
+                                    </div>
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumnsClases"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumnsClases;" class="element-row">
+                        </mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+    <div *ngIf="gestionProfesores">
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-6 text-left">
+                <h3>Profesores</h3>
+            </div>
+            <div class="col-3 text-center">
+                <!--<button type="button" *ngIf="(crearActividad) || editarActividad" (click)="cerrarModal()"
+                    class="btn btn-outline-danger">Cancelar</button>-->
+            </div>
+            <div class="col-3 text-right">
+                <button type="button" *ngIf="(!crearProfesor) && !editarProfesor" (click)="abrirCrearProfesor()"
+                    class="btn btn-outline-success"><i class="fa fa-plus"></i> Crear Profesor</button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <nav *ngIf="(!crearProfesor) && !editarProfesor">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-id-card"></i> Profesores
+                        </li>
+                    </ol>
+                </nav>
+                <nav *ngIf="crearProfesor">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item" (click)="cerrarModal()"><a class="migas"><i
+                                    class="fa fa-id-card"></i>
+                                Profesores</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Crear Profesor</li>
+                    </ol>
+                </nav>
+                <nav *ngIf="editarProfesor">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" (click)="abrirActividadActual()"><a class="migas"><i
+                                    class="fa fa-home"></i>
+                                Home</a></li>
+                        <li class="breadcrumb-item" (click)="cerrarModal()"><a class="migas"><i
+                                    class="fa fa-id-card"></i>
+                                Profesores</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Editar Profesor:
+                            {{ProfesorparaEditar.nombre}}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div *ngIf="crearProfesor || editarProfesor" class="row justify-content-center">
+            <div class="col-8">
+                <app-crear-profesor *ngIf="crearProfesor">
+                </app-crear-profesor>
+                <app-editar-profesor *ngIf="editarProfesor" [editarProfesor]="ProfesorparaEditar">
+                </app-editar-profesor>
+            </div>
+        </div>
+        <div *ngIf="(!crearProfesor || editarProfesor) && (crearProfesor || !editarProfesor)"
+            class="row justify-content-md-center">
+            <div class="col-12">
+                <div class="example-header">
+                    <mat-form-field>
+                        <input matInput (keyup)="applyFilterP($event.target.value)" placeholder="Filtrar">
+                    </mat-form-field>
+                </div>
+                <div class="example-container">
+                    <mat-table [dataSource]="dataSourceProfesores" class="mat-elevation-z1" matSort>
+                        <ng-container matColumnDef="nombre">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="editarP(row)"> {{row.nombre}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="apellidos">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Apellidos </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="editarP(row)"> {{row.apellidos}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="departamento">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Departamento </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="editarP(row)"> {{row.departamento}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accion1">
+                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="editarborrar">
+                            <mat-header-cell *matHeaderCellDef>Editar / Borrar</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="text-center seccion-edit">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button (click)="editarP(row)"
+                                            class="btn btn-sm btn-outline-secondary boton-tabla"><i
+                                                class="fa fa-edit"></i></button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button (click)="borrarP(row)"
+                                            class="btn btn-sm btn-outline-danger boton-tabla"><i
+                                                class="fa fa-trash-o"></i></button>
+                                    </div>
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumnsProfesores"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumnsProfesores;" class="element-row">
+                        </mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>

@@ -1,0 +1,26 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+     height: 100%;
+     width: 100%;
+}
+
+body {
+     margin: 0;
+     font-family: Roboto, "Helvetica Neue", sans-serif;
+     background-color: rgba(152, 179, 255, 0.205);
+     justify-items: center;
+     align-items: center;
+     overflow-x: hidden;
+}
+@import '~@angular/cdk/overlay-prebuilt.css';
+
+.breadcrumb{
+     background-color: rgba(152, 179, 255, 0.305);
+}
+.migas{
+     cursor: pointer;
+}
+.grafica{
+     max-height: 500px;
+}

@@ -1,0 +1,40 @@
+#titulo {
+    color: rgba(233, 239, 255,1);
+    text-align: center;
+}
+.body{
+    min-height: 100vh;
+}
+
+.btn-circle {
+    width: 200px;
+    height: 200px;
+    padding: 6px 0px;
+    border-radius: 200px;
+    text-align: center;
+    font-size: 23px;
+    line-height: 1.42857;
+}
+.footer {
+    color: aliceblue;
+    bottom: 0;
+ }
+
+ .icono_rrss{
+    width: 15px;
+    height: 15px;
+ }
+.nav-link{
+    font-size: 17px;
+    color: #ECFFB0;
+}
+.nav-link:hover{
+    color: #ECFFB0;
+    z-index: 1;
+}
+nav.navbar {
+    background-color: #CC1414;
+}
+.bg-company-blue{
+    background-color: rgb(84, 88, 123) !important;
+}

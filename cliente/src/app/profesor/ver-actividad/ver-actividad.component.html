@@ -1,0 +1,929 @@
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-center">{{actividad.nombre}}</h3>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-12">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" (click)="cerrarActividad()"><a class="migas"><i class="fa fa-home"></i>
+                        Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Ver Actividad</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col-12">
+        <h5 class="text-center" *ngIf="actividad.estado=='Creada'">Actividad sin empezar</h5>
+        <h5 class="text-center" *ngIf="actividad.estado=='Comenzada'">Actividad empezada</h5>
+        <h5 class="text-center" *ngIf="actividad.estado=='Finalizada'">Actividad finalizada</h5>
+    </div>
+</div>
+<div class="row justify-content-md-center text-center">
+    <div class="col-3 text-left">
+        <button
+            *ngIf="actividad.estado=='Creada' && !botonCreadaCargando && !botonFinalizadaCargando && !botonReanudarCargando"
+            type="button" class="btn btn-outline-success disenable" (click)="comenzar()"><i
+                class="fa fa-play-circle"></i> Comenzar</button>
+        <button *ngIf="botonCreadaCargando" class="btn btn-outline-success" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Comenzando...
+        </button>
+        <button
+            *ngIf="actividad.estado=='Comenzada' && !botonCreadaCargando && !botonFinalizadaCargando && !botonReanudarCargando"
+            type="button" class="btn btn-outline-danger disenable" (click)="terminar()"><i
+                class="fa fa-stop-circle"></i>
+            Terminar</button>
+        <button *ngIf="botonFinalizadaCargando" class="btn btn-outline-danger" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Terminando...
+        </button>
+        <button
+            *ngIf="actividad.estado=='Finalizada' && !botonCreadaCargando && !botonFinalizadaCargando && !botonReanudarCargando"
+            type="button" class="btn btn-outline-success disenable" (click)="comenzar()"><i class="fa fa-undo"></i>
+            Reanudar Actividad</button>
+        <button *ngIf="actividad.estado=='Finalizada' && botonReanudarCargando" class="btn btn-outline-danger"
+            type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Reanunando..
+        </button>
+    </div>
+    <div class="row col-6 justify-content-center text-center" *ngIf="!actividadAbierta">
+        <div class="col-2 text-center">
+            <div class="row justify-content-center">
+                <button type="button" class="btn btn-success btn-circle2" disabled>
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="row justify-content-center">
+                Creada
+            </div>
+        </div>
+        <div class="col-3">
+            <hr style="margin-top: 20%;">
+        </div>
+        <div class="col-2 text-center">
+            <div class="row justify-content-center">
+                <button *ngIf="actividad.estado=='Comenzada' || actividad.estado=='Finalizada'" type="button"
+                    class="btn btn-success btn-circle2" disabled>
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+                <button *ngIf="actividad.estado=='Creada'" type="button" class="btn btn-outline-secondary btn-circle2"
+                    disabled>
+
+                </button>
+            </div>
+            <div class="row justify-content-center">
+                Comenzada
+            </div>
+        </div>
+        <div class="col-3">
+            <hr style="margin-top: 20%;">
+        </div>
+        <div class="col-2 text-center">
+            <div class="row justify-content-center">
+                <button *ngIf="actividad.estado=='Finalizada'" type="button" class="btn btn-success btn-circle2"
+                    disabled>
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+                <button *ngIf="actividad.estado=='Creada' || actividad.estado=='Comenzada'" type="button"
+                    class="btn btn-outline-secondary btn-circle2" disabled>
+
+                </button>
+            </div>
+            <div class="row justify-content-center">
+                Finalizada
+            </div>
+        </div>
+    </div>
+    <div class="col-3 text-right">
+        <button *ngIf=" !botonCreadaCargando && !botonFinalizadaCargando && !botonReanudarCargando" type="button"
+            class="btn btn-dark" (click)="cerrarActividad()"><i class="fa fa-times-circle"></i> Volver atrás</button>
+        <button *ngIf="botonCreadaCargando || botonFinalizadaCargando || botonReanudarCargando" type="button"
+            class="btn btn-dark" (click)="cerrarActividad()" disabled><i class="fa fa-times-circle"></i>
+            Volver atrás</button>
+    </div>
+</div>
+<br>
+<div class="row justify-content-center text-center">
+    <div *ngIf="vistaGeneral" class="btn-group btn-group-toggle">
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="options" id="general" (click)="cambiarAGeneral()" checked> General
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMapa()"> Mapa de la clase
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAEvolucion()"> Evolucion
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMedia()"> Media
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAAlumnos()"> Alumnos
+        </label>
+    </div>
+    <div *ngIf="vistaMapaDeLaClase" class="btn-group btn-group-toggle">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="general" (click)="cambiarAGeneral()"> General
+        </label>
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMapa()" checked> Mapa de la clase
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAEvolucion()"> Evolucion
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMedia()"> Media
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAAlumnos()"> Alumnos
+        </label>
+    </div>
+    <div *ngIf="evolucion" class="btn-group btn-group-toggle">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="general" (click)="cambiarAGeneral()"> General
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMapa()"> Mapa de la clase
+        </label>
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAEvolucion()" checked> Evolucion
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMedia()"> Media
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAAlumnos()"> Alumnos
+        </label>
+    </div>
+    <div *ngIf="conectados" class="btn-group btn-group-toggle">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="general" (click)="cambiarAGeneral()"> General
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMapa()"> Mapa de la clase
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAEvolucion()"> Evolucion
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMedia()"> Media
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAAlumnos()"> Alumnos
+        </label>
+    </div>
+    <div *ngIf="media" class="btn-group btn-group-toggle">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="general" (click)="cambiarAGeneral()"> General
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMapa()"> Mapa de la clase
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAEvolucion()"> Evolucion
+        </label>
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMedia()" checked> Media
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAAlumnos()"> Alumnos
+        </label>
+    </div>
+    <div *ngIf="tablaAlumnos" class="btn-group btn-group-toggle">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="general" (click)="cambiarAGeneral()"> General
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMapa()"> Mapa de la clase
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAEvolucion()"> Evolucion
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAMedia()"> Media
+        </label>
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="options" id="mapa_de_clase" (click)="cambiarAAlumnos()" checked> Alumnos
+        </label>
+    </div>
+</div>
+<br>
+<div *ngIf="actividad.estado=='Comenzada' && !botonCreadaCargando && !botonFinalizadaCargando && !botonReanudarCargando"
+    class="row justify-content-center text-center">
+    <div class="col-2">
+        <button *ngIf="!simulandoDatos" (click)="simularDatos()" type="button" class="btn btn-outline-success"> <i
+                class="fa fa-bar-chart"></i> Simular datos </button>
+        <button *ngIf="simulandoDatos" (click)="simularDatos()" type="button" class="btn btn-outline-danger"> <i
+                class="fa fa-bar-chart"></i> Parar simulacion </button>
+    </div>
+</div>
+<br>
+<div id="vistaGeneral">
+    <div class="row justify-content-center">
+        <!--<div id="conectadosPequeños" class="col-4 card">
+            <div class="card-body">
+                <h6 class="card-title text-center">Usuarios Conectados</h6>
+                <canvas id="usersConectados"></canvas>
+                <h6 class="text-center">{{porUsuariosConectados}}% Usuarios conectados</h6>
+            </div>
+        </div>-->
+        <div id="conectadosPequeños" class="col-auto">
+            <h5 class="text-center card-title">Usuarios Conectados</h5>
+            <canvas id="usersConectados"></canvas>
+            <h6 class="text-center">{{porUsuariosConectados}}% Alumnos conectados</h6>
+        </div>
+        <!--<div class="col-auto card">
+            <div class="card-body">
+                <h6 class="card-title text-center">Grafica</h6>
+                <div class="row text-center justify-content-center">
+                    <div class="col-4">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Estado
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-item" *ngFor="let estado of estados">
+                                    <input type="checkbox" class="form-check-input" [(ngModel)]="estado.checked">
+                                    <a>{{estado.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Alumnos
+                            </button>
+                            <div class="dropdown-menu">
+                                <a *ngIf="alumnoSeleccionadoAlumno" class="dropdown-item">Media de la clase</a>
+                                <div class="dropdown-item" *ngFor="let alumno of alumnosSelect">
+                                    <input type="checkbox" class="form-check-input" [(ngModel)]="alumno.checked">
+                                    <a>{{alumno.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-success" (click)="actualizarGraficaLineal()"><i
+                                class="fa fa-refresh"></i> Actualizar</button>
+                    </div>
+                </div>
+                <div class="row text-center justify-content-center">
+                    <canvas id="graficaLineal"></canvas>
+                </div>
+            </div>
+        </div>-->
+        <div class="col-9">
+            <div>
+                <div class="row">
+                    <h5 class="col-12 text-center card-title">Grafica</h5>
+                </div>
+                <div class="row text-center justify-content-center">
+                    <div class="col-6">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Estado
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-item" *ngFor="let estado of estados">
+                                    <input type="checkbox" class="form-check-input" (click)="actualizarGraficaLineal()"
+                                        [(ngModel)]="estado.checked">
+                                    <a>{{estado.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Alumnos
+                            </button>
+                            <div class="dropdown-menu">
+                                <a *ngIf="alumnoSeleccionadoAlumno" class="dropdown-item">Media de la clase</a>
+                                <div class="dropdown-item" *ngFor="let alumno of alumnosSelect">
+                                    <input type="checkbox" class="form-check-input" (click)="actualizarGraficaLineal()"
+                                        [(ngModel)]="alumno.checked">
+                                    <a>{{alumno.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="col-4">
+                        <button type="button" class="btn btn-outline-success" (click)="actualizarGraficaLineal()"><i
+                                class="fa fa-refresh"></i> Actualizar</button>
+                    </div>-->
+                </div>
+            </div>
+            <div>
+                <canvas id="graficaLineal"></canvas>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-sm-auto col-md-7">
+            <div class="text-center">
+                <i class="fa fa-users fa-2x"></i>
+                <h5>Alumnos</h5>
+            </div>
+            <div class="example-header">
+                <mat-form-field>
+                    <input matInput (keyup)="applyFilterA($event.target.value)" placeholder="Filtrar">
+                </mat-form-field>
+            </div>
+            <div class="example-container">
+                <mat-table [dataSource]="dataSourceAlumnos" class="mat-elevation-z1" matSort>
+                    <ng-container matColumnDef="nombre">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="estado">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.estado}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="pulsaciones">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> 
+                            <div *ngIf="actividad.estado!='Finalizada'">Pulsaciones</div>
+                            <div *ngIf="actividad.estado=='Finalizada'">Pulsaciones Media</div>  
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <div *ngIf="row.pulsaciones<=95">{{row.pulsaciones}} ppm</div>
+                            <div *ngIf="row.pulsaciones>95" style="color:red">{{row.pulsaciones}} ppm</div>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="webcam">
+                        <mat-header-cell *matHeaderCellDef><button class="btn btn-sm btn-primary"
+                                (click)="activarTodasWebCam()"><i class="fa fa-video-camera"></i> Todos</button>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <button *ngIf="row.webcam!=true && row.estado!='Desconectado' && !row.cargandoC"
+                                class="btn btn-sm btn-outline-primary" (click)="activarWebCam(row.estudiante)"><i
+                                    class="fa fa-video-camera"></i>
+                                Activar</button>
+                            <button *ngIf="row.cargandoC" class="btn btn-sm btn-outline-primary disabled" type="button"
+                                disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Activando ...
+                            </button>
+                            <button *ngIf="row.webcam==true && row.estado!='Desconectado' && !row.cargandoC"
+                                class="btn btn-sm btn-outline-danger" (click)="desactivarWebCam(row.estudiante)"><i
+                                    class="fa fa-video-camera"></i>
+                                Desactivar</button>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="pulsera">
+                        <mat-header-cell *matHeaderCellDef><button class="btn btn-sm btn-primary"
+                                (click)="activarTodasPulseras()"><i class="fa fa-heartbeat"></i> Todos</button>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <button *ngIf="row.pulsera!=true && row.estado!='Desconectado' && !row.cargandoP"
+                                class="btn btn-sm btn-outline-primary" (click)="activarPulsera(row.estudiante)"><i
+                                    class="fa fa-heartbeat"></i>
+                                Activar</button>
+                            <button *ngIf="row.cargandoP" class="btn btn-sm btn-outline-primary disabled" type="button"
+                                disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Activando ...
+                            </button>
+                            <button *ngIf="row.pulsera==true && row.estado!='Desconectado' && !row.cargandoP"
+                                class="btn btn-sm btn-outline-danger" (click)="desactivarPulsera(row.estudiante)"><i
+                                    class="fa fa-heartbeat"></i>
+                                Desactivar</button>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="led">
+                        <mat-header-cell *matHeaderCellDef>
+                            <button class="btn btn-sm btn-primary" (click)="activarTodosLeds()"><i
+                                    class="fa fa-lightbulb-o"></i> Todos</button>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <button *ngIf="row.led!=true && row.estado!='Desconectado' && !row.cargandoL"
+                                class="btn btn-sm btn-outline-primary" (click)="activarLed(row.estudiante)"><i
+                                    class="fa fa-lightbulb-o"></i> Activar</button>
+                            <button *ngIf="row.cargandoL" class="btn btn-sm btn-outline-primary disabled" type="button"
+                                disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Activando ...
+                            </button>
+                            <button *ngIf="row.led==true && row.estado!='Desconectado' && !row.cargandoL"
+                                class="btn btn-sm btn-outline-danger" (click)="desactivarLed(row.estudiante)"><i
+                                    class="fa fa-lightbulb-o"></i> Desactivar</button>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumnsAlumnos"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumnsAlumnos;">
+                    </mat-row>
+                </mat-table>
+                <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+            </div>
+        </div>
+        <!--<div class="col-auto text-center card">
+            <div class="card-body">
+                <h6 class="card-title text-center">Estado de la clase</h6>
+                <div class="row justify-content-center">
+                    <div class="col-5">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Estado
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-item" *ngFor="let estado of estadosGlobales">
+                                    <input type="checkbox" class="form-check-input" [(ngModel)]="estado.checked">
+                                    <a>{{estado.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <button type="button" class="btn btn-outline-success" (click)="actualizarGraficaGlobal()"> <i
+                                class="fa fa-refresh"></i> Actualizar</button>
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <canvas id="estadoGlobal"></canvas>
+                </div>
+            </div>
+        </div>-->
+        <div class="col-auto text-center">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h5>Estado de la clase</h5>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-5 text-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            {{estadosConjuntoSeleccionado.nombre}}
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" *ngFor="let estado of estadosConjunto2" (click)="seleccionarEstadoGlobal(estado)">
+                                <a>{{estado.nombre}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-5">
+                    <button type="button" class="btn btn-outline-success" (click)="actualizarGraficaGlobal()"> <i
+                            class="fa fa-refresh"></i> Actualizar</button>
+                </div>-->
+            </div>
+            <br>
+            <div>
+                <canvas id="estadoGlobal"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="vistaMapaDeLaClase" class="col-12" style="display: none;">
+    <div class="row">
+        <div class="card col-12">
+            <div class="card-body">
+                <div class="row justify-content-center">
+                    <div class="col-6 text-center">
+                        <h5 class="card-title">Distribucion de la clase</h5>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <!--<div class="col-4 text-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                {{visualizacionSelected}}
+                            </button>
+                            <div class="dropdown-menu">
+                                <a *ngIf="alumnoSeleccionadoAlumno" class="dropdown-item">Media de la clase</a>
+                                <div class="dropdown-item" *ngFor="let visualizacion of visualizaciones"
+                                    (click)="seleccionVisualizacion(visualizacion)">
+                                    <a>{{visualizacion.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="col-md-6">
+
+                    </div>
+                    <div class="col-md-6 col-auto">
+                        <div class="row justify-content-center">
+                            <div class="col-6 text-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        {{estadoConjuntoSeleccionado}}
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <div class="dropdown-item" (click)="seleccionarEstadoConjunto(estado)"
+                                            *ngFor="let estado of estadosConjunto">
+                                            <a>{{estado.nombre}}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="actividad.estado=='Comenzada'" class="col-6 text-center">
+                                <button *ngIf="!actualizandoResumen" type="button" class="btn btn-outline-success"
+                                    (click)="actualizarResumen()"><i class="fa fa-refresh"></i> Actualizar</button>
+                                <!--actualizandoResumen-->
+                                <button *ngIf="actualizandoResumen" class="btn btn-outline-success disabled"
+                                    type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Actualizando ...
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <div id="clase" class="example-boundary">
+                            <div id="{{item.id_item}}" *ngFor="let item of actividad.alumnos" class="example-box"
+                                ondrop="myFunction(item)" [cdkDragFreeDragPosition]="item.posicion"
+                                cdkDragBoundary=".example-boundary" cdkDrag (cdkDragEnded)="dragEnded($event,item)">
+                                {{item.estudiante.nombre}}
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="visualizacionSelected.nombre == 'Mapa de Calor'" class="col-auto">
+                        <div class="example-boundary heatmap" data="data"></div>
+                    </div>
+                    <div class="col-sm-6 col-12">
+                        <div id="datoAlegria">
+                            <div class="text-left">
+                                <h6>Alegria</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-alegria" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(255,255,84,1)" aria-valuenow="25"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.alegria}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datoAsco">
+                            <div class="text-left">
+                                <h6>Asco</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-asco" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(0,0,0,0.5)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.asco}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datoMiedo">
+                            <div class="text-left">
+                                <h6>Miedo</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-miedo" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(0,150,0,1)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.miedo}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datoSorpresa">
+                            <div class="text-left">
+                                <h6>Sorpresa</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-sorpresa" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(89,189,255,1)" aria-valuenow="25"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.sorpresa}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datoTristeza">
+                            <div class="text-left">
+                                <h6>Tristeza</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-tristeza" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(81,81,255,1)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.tristeza}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datoIra">
+                            <div class="text-left">
+                                <h6>Ira</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-ira" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(255,0,0,1)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.ira}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datoconcentrado">
+                            <div class="text-left">
+                                <h6>Concentrado</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-concentrado" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(84,255,84,1)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.concentrado}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datodistraido">
+                            <div class="text-left">
+                                <h6>Distraido</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-distraido" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(70,70,70,1)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.distraido}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datomotivado">
+                            <div class="text-left">
+                                <h6>Motivado</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-motivado" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(84,25,80,1)" aria-valuenow="25" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.motivado}}%
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datofrustrado">
+                            <div class="text-left">
+                                <h6>Frustrado</h6>
+                            </div>
+                            <div class="row">
+                                <div class="progress col-10">
+                                    <div id="progress-frustrado" class="progress-bar" role="progressbar"
+                                        style="background-color: rgba(123,123,123,1)" aria-valuenow="25"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="col-2">
+                                    {{datosResumenSeleccionados.frustrado}}%
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+<div id="GraficoEvolucion">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div>
+                <div class="row">
+                    <h4 class="col-12 text-left card-title">Grafica</h4>
+                </div>
+                <div class="row text-center justify-content-center">
+                    <div class="col-6">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Estado
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-item" *ngFor="let estado of estados">
+                                    <input type="checkbox" class="form-check-input" (click)="actualizarGraficaLineal()"
+                                        [(ngModel)]="estado.checked">
+                                    <a>{{estado.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Alumnos
+                            </button>
+                            <div class="dropdown-menu">
+                                <a *ngIf="alumnoSeleccionadoAlumno" class="dropdown-item">Media de la clase</a>
+                                <div class="dropdown-item" *ngFor="let alumno of alumnosSelect">
+                                    <input type="checkbox" class="form-check-input" (click)="actualizarGraficaLineal()"
+                                        [(ngModel)]="alumno.checked">
+                                    <a>{{alumno.nombre}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="col-4">
+                        <button type="button" class="btn btn-outline-success" (click)="actualizarGraficaLineal()"><i
+                                class="fa fa-refresh"></i> Actualizar</button>
+                    </div>-->
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <canvas id="graficaLinealEntera"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!--<div>
+                <canvas id="graficaLinealEntera"></canvas>
+            </div>-->
+        </div>
+    </div>
+</div>
+<!--<div id="gUsuariosConectados">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <h4 class="text-left card-title">Alumnos Conectados</h4>
+            <canvas id="usersConectadosEntera"></canvas>
+            <h6 class="text-center">{{porUsuariosConectados}}%</h6>
+        </div>
+    </div>
+
+</div>-->
+<div id="gEstadoUsuarios">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="row">
+                <div class="col-12 text-left">
+                    <h4>Estado de la clase</h4>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-5 text-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            {{estadosConjuntoSeleccionado.nombre}}
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" *ngFor="let estado of estadosConjunto2" (click)="seleccionarEstadoGlobal(estado)">
+                                <a>{{estado.nombre}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-5">
+                    <button type="button" class="btn btn-outline-success" (click)="actualizarGraficaGlobal()"> <i
+                            class="fa fa-refresh"></i> Actualizar</button>
+                </div>-->
+            </div>
+            <br>
+            <div>
+                <canvas id="estadoGlobalEntero"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="tablaUsuarios">
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <div class="text-left">
+                <h4>Alumnos</h4>
+            </div>
+            <div class="example-header">
+                <mat-form-field>
+                    <input matInput (keyup)="applyFilterA($event.target.value)" placeholder="Filtrar">
+                </mat-form-field>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="example-container">
+                        <mat-table [dataSource]="dataSourceAlumnos" class="mat-elevation-z1" matSort>
+                            <ng-container matColumnDef="nombre">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="estado">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                                <mat-cell *matCellDef="let row"> {{row.estado}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="pulsaciones">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> 
+                                    <div *ngIf="actividad.estado!='Finalizada'">Pulsaciones</div>
+                                    <div *ngIf="actividad.estado=='Finalizada'">Pulsaciones Media</div>  
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row">
+                                    <div *ngIf="row.pulsaciones<=95">{{row.pulsaciones}} ppm</div>
+                                    <div *ngIf="row.pulsaciones>95" style="color:red">{{row.pulsaciones}} ppm</div>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="webcam">
+                                <mat-header-cell *matHeaderCellDef><button class="btn btn-sm btn-primary"
+                                        (click)="activarTodasWebCam()"><i class="fa fa-video-camera"></i> Todos</button>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row">
+                                    <button *ngIf="row.webcam!=true && row.estado!='Desconectado' && !row.cargandoC"
+                                        class="btn btn-sm btn-outline-primary"
+                                        (click)="activarWebCam(row.estudiante)"><i class="fa fa-video-camera"></i>
+                                        Activar</button>
+                                    <button *ngIf="row.cargandoC" class="btn btn-sm btn-outline-primary disabled"
+                                        type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        Activando ...
+                                    </button>
+                                    <button *ngIf="row.webcam==true && row.estado!='Desconectado' && !row.cargandoC"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="desactivarWebCam(row.estudiante)"><i class="fa fa-video-camera"></i>
+                                        Desactivar</button>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="pulsera">
+                                <mat-header-cell *matHeaderCellDef><button class="btn btn-sm btn-primary"
+                                        (click)="activarTodasPulseras()"><i class="fa fa-heartbeat"></i> Todos</button>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row">
+                                    <button *ngIf="row.pulsera!=true && row.estado!='Desconectado' && !row.cargandoP"
+                                        class="btn btn-sm btn-outline-primary"
+                                        (click)="activarPulsera(row.estudiante)"><i class="fa fa-heartbeat"></i>
+                                        Activar</button>
+                                    <button *ngIf="row.cargandoP" class="btn btn-sm btn-outline-primary disabled"
+                                        type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        Activando ...
+                                    </button>
+                                    <button *ngIf="row.pulsera==true && row.estado!='Desconectado' && !row.cargandoP"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="desactivarPulsera(row.estudiante)"><i class="fa fa-heartbeat"></i>
+                                        Desactivar</button>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="led">
+                                <mat-header-cell *matHeaderCellDef>
+                                    <button class="btn btn-sm btn-primary" (click)="activarTodosLeds()"><i
+                                            class="fa fa-lightbulb-o"></i> Todos</button>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row">
+                                    <button *ngIf="row.led!=true && row.estado!='Desconectado' && !row.cargandoL"
+                                        class="btn btn-sm btn-outline-primary" (click)="activarLed(row.estudiante)"><i
+                                            class="fa fa-lightbulb-o"></i> Activar</button>
+                                    <button *ngIf="row.cargandoL" class="btn btn-sm btn-outline-primary disabled"
+                                        type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        Activando ...
+                                    </button>
+                                    <button *ngIf="row.led==true && row.estado!='Desconectado' && !row.cargandoL"
+                                        class="btn btn-sm btn-outline-danger" (click)="desactivarLed(row.estudiante)"><i
+                                            class="fa fa-lightbulb-o"></i> Desactivar</button>
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumnsAlumnos"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumnsAlumnos;">
+                            </mat-row>
+                        </mat-table>
+                        <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>

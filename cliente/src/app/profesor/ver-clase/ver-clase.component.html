@@ -1,0 +1,138 @@
+<div *ngIf="!verEstadisticasClase" class="row justify-content-center">
+    <div class="col-7 text-left">
+        <h3>Actividades de la clase {{clase.nombre}}</h3>
+    </div>
+    <div class="col-5">
+        <div *ngIf="!editarActividad" class="row">
+            <div class="col-6 text-right">
+                <button *ngIf="!creandoActividad" type="button" class="btn btn btn-outline-success"
+                    (click)="crearActividad()"><i class="fa fa-plus"></i> Crear Actividad</button>
+                <button *ngIf="creandoActividad" class="btn btn-outline-success disabled" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Creando ...
+                </button>
+            </div>
+            <div class="col-6 text-right">
+                <button *ngIf="!editarActividad" type="button" class="btn btn-dark" (click)="cerrarClase()"><i
+                        class="fa fa-times-circle"></i> Cerrar
+                    Clase</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br *ngIf="!verEstadisticasClase">
+<br *ngIf="verEstadisticasClase">
+<div class="row">
+    <div class="col-12">
+        <nav *ngIf="!verEstadisticasClase && !editarActividad">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" (click)="irHome()"><a class="migas"><i class="fa fa-home"></i>
+                        Home</a></li>
+                <li class="breadcrumb-item" (click)="cerrarClase()"><a class="migas"><i class="fa fa-book"></i>
+                        Clases</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Ver Clase: {{clase.nombre}}</li>
+            </ol>
+        </nav>
+        <nav *ngIf="editarActividad">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" (click)="irHome()"><a class="migas"><i class="fa fa-home"></i>
+                        Home</a></li>
+                <li class="breadcrumb-item" (click)="cerrarClase()"><a class="migas"><i class="fa fa-book"></i>
+                        Clases</a></li>
+                <li class="breadcrumb-item" (click)="cancelar()"><a class="migas">
+                    Ver Clase: {{clase.nombre}}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Editar Actividad: {{actividad.nombre}}</li>
+            </ol>
+        </nav>
+        <nav *ngIf="verEstadisticasClase">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" (click)="irHome()"><a class="migas"><i class="fa fa-home"></i>
+                        Home</a></li>
+                <li class="breadcrumb-item" (click)="cerrarClase()"><a class="migas"><i class="fa fa-book"></i>
+                        Clases</a></li>
+                <li class="breadcrumb-item" (click)="cancelar()"><a class="migas">
+                    Ver Clase: {{clase.nombre}}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Estadisticas: {{clase.nombre}}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div>
+    <app-editar-actividad *ngIf="editarActividad" [estudiantes]="listaAlumnos" [verClase]="vengoDeProfesor"
+        [editarActividad]="actividad" (actividadEditada)="actualizarActividad($event)" (cerrarModalOut)="cancelar()">
+    </app-editar-actividad>
+</div>
+<div *ngIf="!verEstadisticasClase && !editarActividad" class="row justify-content-md-center">
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-12 example-header">
+                <mat-form-field>
+                    <input matInput (keyup)="applyFilterA($event.target.value)" placeholder="Filtrar">
+                </mat-form-field>
+            </div>
+            <!--<div class="col-3 text-right">
+                <button type="button" class="btn btn-outline-primary" (click)="abrirEstadisticasClase()"><i
+                        class="fas fa-chart-bar"></i>Ver Estadisticas</button>
+            </div>-->
+        </div>
+        <div class="example-container">
+            <mat-table [dataSource]="dataSourceActividades" class="mat-elevation-z1" matSort>
+                <ng-container matColumnDef="nombre">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+                    <mat-cell *matCellDef="let row" (click)="abrirActividad(row)"> {{row.nombre}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="profesor">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Profesor </mat-header-cell>
+                    <mat-cell *matCellDef="let row" (click)="abrirActividad(row)"> {{row.profesor.nombre}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="estado">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                    <mat-cell *matCellDef="let row" (click)="abrirActividad(row)">
+                        <div *ngIf="row.estado=='Creada'">
+                            <i class="fa fa-check"></i> {{row.estado}}
+                        </div>
+                        <div *ngIf="row.estado=='Comenzada'">
+                            <i class="fa fa-play-circle"></i> {{row.estado}}
+                        </div>
+                        <div *ngIf="row.estado=='Finalizada'">
+                            <i class="fa fa-bar-chart"></i> {{row.estado}}
+                        </div>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-cell *matCellDef="let row" (click)="abrirActividad(row)">
+                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="abrirActividad(row)"><i
+                                class="fa fa-external-link"></i> Acceder</button>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="editarborrar">
+                    <mat-header-cell *matHeaderCellDef>Editar / Borrar</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="seccion-edit">
+                        <div class="row">
+                            <div class="col-6">
+                                <button (click)="editarA(row)" class="btn btn-sm btn-outline-secondary boton-tabla"><i
+                                        class="fa fa-edit"></i></button>
+                            </div>
+                            <div class="col-6">
+                                <button style="width: 40px;" (click)="borrarA(row)"
+                                    class="btn btn-sm btn-outline-danger boton-tabla"><i
+                                        class="fa fa-trash-o"></i></button>
+                            </div>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumnsActividades"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumnsActividades;" class="element-row">
+                </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+        </div>
+    </div>
+</div>
+<br>
